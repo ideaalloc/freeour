@@ -1,0 +1,8 @@
+{
+  "name": "freeour",
+  "version": "0.0.1-SNAPSHOT",
+  "dependencies": {
+    "jquery": "latest",
+    "semantic-ui": "latest"
+  }
+}

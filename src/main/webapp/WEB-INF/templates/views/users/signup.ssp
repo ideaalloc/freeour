@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
+    <meta name="robots" content="Disallow">
+    <meta name="author" content="lvchao, ideaalloc@gmail.com">
+    <title>飞窝</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+	<!----------start sign_up----------->
+		<div class="sign_up">
+			<!----------start form----------->
+			<form class="sign" action="/users/signup" method="post">
+				<div class="formtitle">注册会员</div>
+				<!----------start top_section----------->
+				<div class="top_section">
+					<div class="section">
+                        <div class="input email">
+                            <input type="text" name="email" placeholder="电邮" required><span><img src="/assets/images/select.png"/></span>
+                        </div>
+						<div class="input password">
+							<input type="password" name="password" placeholder="密码" required><span><img src="/assets/images/close.png"/></span>
+						</div>
+						<div class="clear"> </div>
+					</div>
+				</div>
+				<!----------end top_section----------->
+				<!----------start personal Details----------->
+				<!----------start bottom-section----------->
+				<div class="bottom-section">
+					<div class="title">个人详情</div>
+                    <div class="section">
+                        <div class="input-sign details">
+                            <input type="text" name="nickname" placeholder="昵称" required>
+                        </div>
+                        <div class="input-sign details1">
+                            <input type="text" name="phone" placeholder="电话">
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+					<div class="submit">
+						<input class="bluebutton submitbotton" type="submit" value="注册" />
+					</div>
+				</div>
+				<!----------end bottom-section----------->
+			</form>
+			<!----------end form----------->
+		</div>
+		<!----------end sign_up----------->
+		<p class="copy_right">&#169; 2015 <a href="http://www.lyuchao.com" target="_blank">&nbsp;吕超</a> </p>
+</body>
+</html>
