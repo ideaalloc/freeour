@@ -1,55 +1,56 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
-    <meta name="robots" content="Disallow">
-    <meta name="author" content="lvchao, ideaalloc@gmail.com">
-    <title>飞窝</title>
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.ico">
-    <link rel="stylesheet" href="/assets/css/style.css">
-</head>
-<body>
-	<!----------start sign_up----------->
-		<div class="sign_up">
-			<!----------start form----------->
-			<form class="sign" action="/users/signup" method="post">
-				<div class="formtitle">注册会员</div>
-				<!----------start top_section----------->
-				<div class="top_section">
-					<div class="section">
-                        <div class="input email">
-                            <input type="text" name="email" placeholder="电邮" required><span><img src="/assets/images/select.png"/></span>
-                        </div>
-						<div class="input password">
-							<input type="password" name="password" placeholder="密码" required><span><img src="/assets/images/close.png"/></span>
-						</div>
-						<div class="clear"> </div>
-					</div>
-				</div>
-				<!----------end top_section----------->
-				<!----------start personal Details----------->
-				<!----------start bottom-section----------->
-				<div class="bottom-section">
-					<div class="title">个人详情</div>
-                    <div class="section">
-                        <div class="input-sign details">
-                            <input type="text" name="nickname" placeholder="昵称" required>
-                        </div>
-                        <div class="input-sign details1">
-                            <input type="text" name="phone" placeholder="电话">
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-					<div class="submit">
-						<input class="bluebutton submitbotton" type="submit" value="注册" />
-					</div>
-				</div>
-				<!----------end bottom-section----------->
-			</form>
-			<!----------end form----------->
+<%@ val hasError: Boolean %>
+
+<form class="ui form" action="/users/signup" method="post">
+	#if (hasError)
+		<div class="ui error warning form segment">
+			<div class="ui error message">
+				<div class="header">注册失败</div>
+				<p>注册信息输入不正确</p>
+			</div>
 		</div>
-		<!----------end sign_up----------->
-		<p class="copy_right">&#169; 2015 <a href="http://www.lyuchao.com" target="_blank">&nbsp;吕超</a> </p>
-</body>
-</html>
+	#end
+
+	<h4 class="ui dividing header">账户信息</h4>
+
+	<div class="two fields">
+	<div class="required field">
+	<div class="ui icon input">
+	<input type="email" name="email" placeholder="电邮" required>
+		<i class="mail icon"></i>
+	</div>
+	</div>
+	<div class="required field">
+	<div class="ui icon input">
+		<input type="password" name="password" placeholder="密码" required>
+			<i class="lock icon"></i>
+		</div>
+	</div>
+	</div>
+
+	<h4 class="ui dividing header">个人信息</h4>
+
+	<div class="field">
+	<div class="ui icon input">
+	<label for="avatar" class="ui icon button btn-file">
+		选择上传头像
+		<i class="photo icon"></i>
+		<input type="file" id="avatar" name="avatar" style="display: none">
+		</label>
+	</div>
+	</div>
+	<div class="two fields">
+	<div class="field">
+	<div class="ui icon input">
+		<input type="text" name="nickname" placeholder="昵称" required>
+			<i class="user icon"></i>
+		</div>
+	</div>
+	<div class="field">
+		<div class="ui icon input">
+			<input type="text" name="phone" placeholder="电话">
+				<i class="call icon"></i>
+			</div>
+		</div>
+	</div>
+	<button type="submit" class="ui submit button">注册</button>
+</form>

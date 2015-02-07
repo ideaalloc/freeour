@@ -74,3 +74,6 @@ jrebel.lic
 
 # bower generation
 /src/main/webapp/app/common/bower_components
+
+# templates to exclude
+/src/main/webapp/app/common/templates

@@ -1,7 +1,37 @@
 <%@ val body: String %>
 
+<!DOCTYPE HTML>
 <html>
-  <body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
+<meta name="robots" content="Disallow">
+<meta name="author" content="lvchao, ideaalloc@gmail.com">
+<title>飞窝</title>
+<link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.ico">
+<link rel="stylesheet"
+    href="/app/common/bower_components/semantic-ui/dist/semantic.min.css">
+</head>
+<body>
+
     <%= unescape(body) %>
-  </body>
+
+    <div class="ui responsive grid copyright">
+    <div class="ui row ">
+
+        <div class="sixteen wide center aligned column">
+            &#169; 2015 <a href="http://www.lyuchao.com" target="_blank">&nbsp;吕超</a>
+        </div>
+
+    </div>
+    </div>
+
+    <script src="/app/common/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/app/common/bower_components/semantic-ui/dist/semantic.min.js"></script>
+    <script>
+        $('.ui.checkbox')
+        .checkbox()
+        ;
+    </script>
+</body>
 </html>

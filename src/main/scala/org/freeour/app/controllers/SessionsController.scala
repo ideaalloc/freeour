@@ -1,5 +1,7 @@
 package org.freeour.app.controllers
 
+import java.util.NoSuchElementException
+
 import org.freeour.app.FreeourStack
 import org.freeour.app.auth.AuthenticationSupport
 
@@ -18,17 +20,32 @@ case class SessionsController(val db: Database) extends FreeourStack with Authen
   get("/new") {
     if (isAuthenticated) redirect("/")
 
+    val hasError: Boolean = try {
+      params("error")
+      true
+    } catch {
+      case e: NoSuchElementException =>
+        logger.info("No error param")
+        false
+    }
+
     contentType = "text/html"
-    ssp("/sessions/login", "layout" -> "")
+    ssp("/sessions/signin", "hasError" -> hasError)
   }
 
   post("/") {
-    scentry.authenticate()
+    try {
+      scentry.authenticate()
+    }
+    catch {
+      case e: Throwable =>
+        logger.info("authentication error", e)
+    }
 
     if (isAuthenticated) {
       redirect("/")
     } else {
-      redirect("/sessions/new")
+      redirect("/sessions/new?error")
     }
   }
 

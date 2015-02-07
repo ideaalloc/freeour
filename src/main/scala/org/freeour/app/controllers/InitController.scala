@@ -1,6 +1,6 @@
 package org.freeour.app.controllers
 
-import org.freeour.app.models.UserRepository
+import org.freeour.app.models._
 import org.mindrot.jbcrypt.BCrypt
 import org.scalatra.ScalatraServlet
 
@@ -16,8 +16,9 @@ trait SlickRoutes extends ScalatraServlet {
 
   val db: Database
 
+  val ddl = UserRepository.ddl ++ ActivityRepository.ddl ++ ActivityUserRepository.ddl ++ ActivityStatsRepository.ddl
+
   get("/create-tables") {
-    val ddl = UserRepository.users.ddl
     db withDynSession {
       ddl.create
     }
@@ -25,13 +26,15 @@ trait SlickRoutes extends ScalatraServlet {
 
   get("/load-data") {
     db withDynSession {
-      UserRepository.users.map(u => (u.email, u.password, u.nickname, u.phone, u.isAdmin)) +=
-        ("ideaalloc@gmail.com", BCrypt.hashpw("888888", BCrypt.gensalt()), "Bill", "13888888888", true)
+      UserRepository ++= Seq(
+        User(None, "ideaalloc@gmail.com", BCrypt.hashpw("888888", BCrypt.gensalt()),
+          "Bill", Some("13888888888"), true, Some("/path/avatar.png"))
+      )
+      Unit
     }
   }
 
   get("/drop-tables") {
-    val ddl = UserRepository.users.ddl
     db withDynSession {
       ddl.drop
     }
@@ -40,7 +43,7 @@ trait SlickRoutes extends ScalatraServlet {
   get("/users") {
     db withDynSession {
       val q3 = for {
-        u <- UserRepository.users
+        u <- UserRepository
       } yield (u.email.asColumnOf[String])
 
       contentType = "text/html"

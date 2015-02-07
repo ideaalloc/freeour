@@ -3,7 +3,7 @@
 ## Build & Run ##
 
 ```sh
-$ cd Freeour
+$ cd freeour
 $ ./sbt
 > container:start
 > browse

@@ -7,8 +7,8 @@ import scala.slick.driver.PostgresDriver.simple._
 /**
  * Created by Bill Lv on 2/3/15.
  */
-case class User(id: Option[Long] = None, email: String, password: String, nickname: String, phone: String,
-                isAdmin: Boolean) {
+case class User(id: Option[Long] = None, email: String, password: String, nickname: String, phone: Option[String] = None,
+                isAdmin: Boolean, avatar: Option[String] = None) {
   val logger = LoggerFactory.getLogger(getClass)
 
   def forgetMe = {
@@ -29,17 +29,17 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
 
   def isAdmin = column[Boolean]("IS_ADMIN", O.NotNull)
 
-  def emailIdx = index("IDX_EMAIL", email, unique = true)
+  def avatar = column[String]("AVATAR", O DBType "varchar(128) null", O.Nullable)
 
-  override def * = (id.?, email, password, nickname, phone, isAdmin) <>(User.tupled, User.unapply)
+  def emailIdx = index("IDX_USERS_EMAIL", email, unique = true)
+
+  override def * = (id.?, email, password, nickname, phone.?, isAdmin, avatar.?) <>(User.tupled, User.unapply)
 }
 
 object UserRepository extends TableQuery(new Users(_)) {
-  val users = TableQuery[Users]
-
   def findById(id: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
-    users.filter(_.id === id).firstOption
+    filter(_.id === id).firstOption
 
   def findByEmail(email: String)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
-    users.filter(_.email === email).firstOption
+    filter(_.email === email).firstOption
 }
