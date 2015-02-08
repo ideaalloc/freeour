@@ -77,3 +77,6 @@ jrebel.lic
 
 # templates to exclude
 /src/main/webapp/app/common/templates
+
+# nodejs specific
+/src/main/webapp/app/node_modules

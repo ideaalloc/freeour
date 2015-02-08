@@ -26,7 +26,7 @@ case class UsersController(val db: Database) extends FreeourStack {
     }
 
     contentType = "text/html"
-    ssp("/users/signup", "hasError" -> hasError)
+    ssp("/users/signup", "layout" -> "", "hasError" -> hasError)
   }
 
   post("/signup") {

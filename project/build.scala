@@ -34,6 +34,8 @@ object FreeourBuild extends Build {
         "c3p0" % "c3p0" % "0.9.1.2",
         "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
         "org.mindrot" % "jbcrypt" % "0.3m",
+        "org.scalatra" %% "scalatra-json" % "2.3.0",
+        "org.json4s" %% "json4s-jackson" % "3.2.11",
         "javax.servlet" % "javax.servlet-api" % "3.1.0" % "container;provided;test" artifacts Artifact("javax.servlet-api", "jar", "jar")
       ),
 

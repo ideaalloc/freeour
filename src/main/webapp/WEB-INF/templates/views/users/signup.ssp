@@ -1,56 +1,118 @@
 <%@ val hasError: Boolean %>
 
-<form class="ui form" action="/users/signup" method="post">
-	#if (hasError)
-		<div class="ui error warning form segment">
-			<div class="ui error message">
-				<div class="header">注册失败</div>
-				<p>注册信息输入不正确</p>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
+<meta name="robots" content="Disallow">
+<meta name="author" content="lvchao, ideaalloc@gmail.com">
+<title>飞窝</title>
+<link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.ico">
+<link rel="stylesheet"
+	href="/app/common/bower_components/semantic-ui/dist/semantic.min.css">
+<link rel="stylesheet" href="/assets/css/avatar.css">
+<style>
+	.avatar-upload {
+		width: 50px;
+		height: 50px;
+		border-radius: 160px;
+		overflow: hidden;
+	}
+	.avatar-upload img {
+		max-width: 50px;
+		max-height: 50px;
+	}
+</style>
+</head>
+<body>
+
+	<form class="ui form" action="/users/signup" method="post" enctype="multipart/form-data">
+		#if (hasError)
+			<div class="ui error warning form segment">
+				<div class="ui error message">
+					<div class="header">注册失败</div>
+					<p>注册信息输入不正确</p>
+				</div>
+			</div>
+		#end
+
+		<h4 class="ui dividing header">账户信息</h4>
+
+		<div class="two fields">
+			<div class="required field">
+				<div class="ui icon input">
+					<input type="email" name="email" placeholder="电邮" required>
+					<i class="mail icon"></i>
+				</div>
+			</div>
+			<div class="required field">
+				<div class="ui icon input">
+					<input type="password" name="password" placeholder="密码" required>
+					<i class="lock icon"></i>
+				</div>
 			</div>
 		</div>
-	#end
 
-	<h4 class="ui dividing header">账户信息</h4>
+		<h4 class="ui dividing header">个人信息</h4>
 
-	<div class="two fields">
-		<div class="required field">
-			<div class="ui icon input">
-				<input type="email" name="email" placeholder="电邮" required>
-				<i class="mail icon"></i>
+		<div class="field">
+			<div class="avatar-upload">
+				<img src="/assets/images/matt.jpg">
+				<input type="hidden" id="photoId">
 			</div>
 		</div>
-		<div class="required field">
-			<div class="ui icon input">
-				<input type="password" name="password" placeholder="密码" required>
-				<i class="lock icon"></i>
-			</div>
-		</div>
-	</div>
-
-	<h4 class="ui dividing header">个人信息</h4>
-
-	<div class="field">
+		<div class="two fields">
+		<div class="field">
 		<div class="ui icon input">
-			<label for="avatar" class="ui icon button btn-file">
-				选择上传头像
-				<i class="photo icon"></i>
-				<input type="file" id="avatar" name="avatar" style="display: none">
-			</label>
-		</div>
-	</div>
-	<div class="two fields">
-	<div class="field">
-	<div class="ui icon input">
-		<input type="text" name="nickname" placeholder="昵称" required>
-			<i class="user icon"></i>
-		</div>
-	</div>
-	<div class="field">
-		<div class="ui icon input">
-			<input type="text" name="phone" placeholder="电话">
-				<i class="call icon"></i>
+			<input type="text" name="nickname" placeholder="昵称" required>
+				<i class="user icon"></i>
 			</div>
 		</div>
+		<div class="field">
+			<div class="ui icon input">
+				<input type="text" name="phone" placeholder="电话">
+					<i class="call icon"></i>
+				</div>
+			</div>
+		</div>
+		<button type="submit" class="ui submit button">注册</button>
+	</form>
+
+	<div class="ui responsive grid copyright">
+		<div class="ui row ">
+
+			<div class="sixteen wide center aligned column">
+				&#169; 2015 <a href="http://www.lyuchao.com" target="_blank">&nbsp;吕超</a>
+			</div>
+
+		</div>
 	</div>
-	<button type="submit" class="ui submit button">注册</button>
-</form>
+
+	<script src="/app/common/bower_components/jquery/dist/jquery.min.js"></script>
+	<script src="/app/common/bower_components/semantic-ui/dist/semantic.min.js"></script>
+	<script src="/assets/js/avatar.js"></script>
+	<script>
+		new window.AvatarUpload({
+			el: document.querySelector('.avatar-upload'),
+			uploadUrl: '/files',
+			uploadData: {
+				photoId: $('#photoId').val()
+			},
+			pretendUpload: false,
+			onSuccess: function (result) {
+				if (result == 0) {
+					console.log('empty file upload')
+				} else if (result == -1) {
+					console.log('persistence error')
+				} else {
+					$('#photoId').val(result)
+				}
+			},
+			onError: function (result) {
+
+			}
+		})
+	</script>
+</body>
+</html>

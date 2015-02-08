@@ -1,7 +1,7 @@
 import javax.servlet.ServletContext
 
 import com.mchange.v2.c3p0.ComboPooledDataSource
-import org.freeour.app.controllers.{UsersController, InitController, ProtectedController, SessionsController}
+import org.freeour.app.controllers._
 import org.scalatra._
 import org.slf4j.LoggerFactory
 
@@ -19,6 +19,7 @@ class ScalatraBootstrap extends LifeCycle {
     context.mount(new ProtectedController(db), "/*")
     context.mount(new SessionsController(db), "/sessions/*")
     context.mount(new UsersController(db), "/users/*")
+    context.mount(new FilesController(db), "/files/*")
   }
 
   private def closeDbConnection() {
