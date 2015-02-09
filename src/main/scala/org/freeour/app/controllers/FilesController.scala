@@ -26,7 +26,7 @@ with JValueResult with JacksonJsonSupport {
       -2
   }
 
-  post("/") {
+  post("/upload") {
     fileParams.get("file") match {
       case Some(file) =>
         val input: InputStream = file.getInputStream

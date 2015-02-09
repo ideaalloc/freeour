@@ -80,3 +80,9 @@ jrebel.lic
 
 # nodejs specific
 /src/main/webapp/app/node_modules
+
+# uploads specific
+/uploads
+
+# jsx precompile specific
+/src/main/webapp/assets/js/build

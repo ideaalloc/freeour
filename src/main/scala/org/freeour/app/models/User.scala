@@ -8,7 +8,7 @@ import scala.slick.driver.PostgresDriver.simple._
  * Created by Bill Lv on 2/3/15.
  */
 case class User(id: Option[Long] = None, email: String, password: String, nickname: String, phone: Option[String] = None,
-                isAdmin: Boolean, avatar: Option[String] = None) {
+                isAdmin: Boolean, avatar: Option[Long] = None) {
   val logger = LoggerFactory.getLogger(getClass)
 
   def forgetMe = {
@@ -29,7 +29,7 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
 
   def isAdmin = column[Boolean]("IS_ADMIN", O.NotNull)
 
-  def avatar = column[String]("AVATAR", O DBType "varchar(128) null", O.Nullable)
+  def avatar = column[Long]("AVATAR", O.Nullable)
 
   def emailIdx = index("IDX_USERS_EMAIL", email, unique = true)
 

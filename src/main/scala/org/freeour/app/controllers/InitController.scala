@@ -16,7 +16,8 @@ trait SlickRoutes extends ScalatraServlet {
 
   val db: Database
 
-  val ddl = UserRepository.ddl ++ ActivityRepository.ddl ++ ActivityUserRepository.ddl ++ ActivityStatsRepository.ddl
+  val ddl = UserRepository.ddl ++ ActivityRepository.ddl ++ ActivityUserRepository.ddl ++
+    ActivityStatsRepository.ddl ++ PhotoRepository.ddl
 
   get("/create-tables") {
     db withDynSession {
@@ -28,7 +29,7 @@ trait SlickRoutes extends ScalatraServlet {
     db withDynSession {
       UserRepository ++= Seq(
         User(None, "ideaalloc@gmail.com", BCrypt.hashpw("888888", BCrypt.gensalt()),
-          "Bill", Some("13888888888"), true, Some("/path/avatar.png"))
+          "Bill", Some("13888888888"), true, None)
       )
       Unit
     }
