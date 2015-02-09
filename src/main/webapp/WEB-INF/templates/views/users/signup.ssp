@@ -75,6 +75,7 @@
 	<script>
 		$(function() {
 			$('#thebox').picEdit({
+				maxWidth: 200,
 				formSubmitted: function(response){
 					if (response.status != 200) {
 						displayError("系统错误")
