@@ -16,7 +16,7 @@ class ScalatraBootstrap extends LifeCycle {
   override def init(context: ServletContext) {
     val db = Database.forDataSource(cpds)
     context.mount(InitController(db), "/db/*")
-    context.mount(new ProtectedController(db), "/*")
+    context.mount(new MainController(db), "/*")
     context.mount(new SessionsController(db), "/sessions/*")
     context.mount(new UsersController(db), "/users/*")
   }

@@ -51,9 +51,8 @@ case class SessionsController(val db: Database) extends FreeourStack with Authen
 
   // Never do this in a real app. State changes should never happen as a result of a GET request. However, this does
   // make it easier to illustrate the logout code.
-  get("/logout") {
+  post("/logout") {
     scentry.logout()
-    redirect("/")
   }
 
 }

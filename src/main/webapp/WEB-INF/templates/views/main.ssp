@@ -1,0 +1,186 @@
+<%@ val userId: Long %>
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="robots" content="Disallow">
+    <meta name="author" content="lvchao, ideaalloc@gmail.com">
+    <title>飞窝</title>
+    <link rel="shortcut icon" type="image/x-icon"
+        href="/assets/images/favicon.ico">
+    <link rel="stylesheet"
+        href="/app/common/bower_components/semantic-ui/dist/semantic.min.css">
+</head>
+<body>
+
+<div class="ui secondary menu">
+    <a class="active item" href="/">
+        <i class="home icon"></i>
+    </a>
+
+    <div class="right menu">
+        <a class="ui item" id="logout">
+            <img class="ui avatar image" alt="avatar"
+                src="/users/${userId}/avatar">
+        </a>
+    </div>
+</div>
+
+<div class="ui two doubling cards">
+    <div class="ui card">
+        <div class="content">
+            <i class="right floated like icon"></i>
+
+            <div class="header">第四次活动</div>
+            <div class="meta">2015年2月6日</div>
+            <div class="meta">八喜训练基地</div>
+
+            <div class="description">
+                <p>欢迎大家使用咱飞窝新的报名系统报名。</p>
+
+                <p>人数7人以上可以订全场，大家快点报名啊。</p>
+            </div>
+        </div>
+        <div class="extra content">
+            <i class="check icon"></i>
+            3 人参加
+        </div>
+        <div class="extra content">
+            <div class="right floated author">
+                <img class="ui avatar image" src="/assets/images/matt.jpg">
+                <img class="ui avatar image" src="/assets/images/matt.jpg">
+                <img class="ui avatar image" src="/assets/images/matt.jpg">
+            </div>
+        </div>
+    </div>
+
+    <div class="ui card">
+        <div class="content">
+            <i class="right floated like icon"></i>
+
+            <div class="header">第五次活动</div>
+            <div class="meta">2015年2月7日</div>
+            <div class="meta">八喜训练基地</div>
+
+            <div class="description">
+                <p>欢迎大家使用咱飞窝新的报名系统报名。</p>
+
+                <p>人数7人以上可以订全场，大家快点报名啊。</p>
+            </div>
+        </div>
+        <div class="extra content">
+            <i class="check icon"></i>
+            4 人参加
+        </div>
+        <div class="extra content">
+            <div class="right floated author">
+                <img class="ui avatar image" src="/assets/images/matt.jpg">
+                <img class="ui avatar image" src="/assets/images/matt.jpg">
+                <img class="ui avatar image" src="/assets/images/matt.jpg">
+                <img class="ui avatar image" src="/assets/images/matt.jpg">
+            </div>
+        </div>
+    </div>
+
+
+<div class="ui card">
+<div class="content">
+<i class="right floated like icon"></i>
+
+<div class="header">第六次活动</div>
+<div class="meta">2015年2月8日</div>
+<div class="meta">八喜训练基地</div>
+
+<div class="description">
+    <p>欢迎大家使用咱飞窝新的报名系统报名。</p>
+
+    <p>人数7人以上可以订全场，大家快点报名啊。</p>
+</div>
+</div>
+<div class="extra content">
+<i class="check icon"></i>
+5 人参加
+</div>
+<div class="extra content">
+<div class="right floated author">
+<img class="ui avatar image"
+src="/assets/images/matt.jpg">
+<img class="ui avatar image"
+src="/assets/images/matt.jpg">
+<img class="ui avatar image"
+src="/assets/images/matt.jpg">
+<img class="ui avatar image"
+    src="/assets/images/matt.jpg">
+    <img class="ui avatar image"
+        src="/assets/images/matt.jpg">
+    </div>
+</div>
+</div>
+<div class="ui card">
+<div class="content">
+<i class="right floated like icon"></i>
+
+<div class="header">第七次活动</div>
+<div class="meta">2015年2月9日</div>
+<div class="meta">八喜训练基地</div>
+
+<div class="description">
+    <p>欢迎大家使用咱飞窝新的报名系统报名。</p>
+
+    <p>人数7人以上可以订全场，大家快点报名啊。</p>
+</div>
+</div>
+<div class="extra content">
+<i class="check icon"></i>
+11 人参加
+</div>
+<div class="extra content">
+<div class="right floated author">
+<img class="ui avatar image"
+src="/assets/images/matt.jpg">
+<img class="ui avatar image"
+src="/assets/images/matt.jpg">
+<img class="ui avatar image"
+src="/assets/images/matt.jpg">
+<img class="ui avatar image"
+src="/assets/images/matt.jpg">
+<img class="ui avatar image"
+src="/assets/images/matt.jpg">
+<img class="ui avatar image"
+src="/assets/images/matt.jpg">
+<img class="ui avatar image"
+    src="/assets/images/matt.jpg">
+    <img class="ui avatar image"
+        src="/assets/images/matt.jpg">
+        <img class="ui avatar image"
+            src="/assets/images/matt.jpg">
+            <img class="ui avatar image"
+                src="/assets/images/matt.jpg">
+                <img class="ui avatar image"
+                    src="/assets/images/matt.jpg">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/app/common/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/app/common/bower_components/semantic-ui/dist/semantic.min.js"></script>
+    <script>
+        $(function() {
+            $("#logout").click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "/sessions/logout",
+                    cache: false,
+                    complete: function(req) {
+                        window.location.replace("/");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

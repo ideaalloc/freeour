@@ -6,6 +6,7 @@ import javax.servlet.ServletException
 
 import com.sksamuel.scrimage.{Format, Image}
 import org.freeour.app.FreeourStack
+import org.freeour.app.auth.AuthenticationSupport
 import org.freeour.app.config.FileConfig
 import org.freeour.app.models._
 import org.json4s.{DefaultFormats, Formats}
@@ -13,7 +14,6 @@ import org.mindrot.jbcrypt.BCrypt
 import org.scalatra.Ok
 import org.scalatra.json.{JValueResult, JacksonJsonSupport}
 import org.scalatra.servlet.{FileUploadSupport, MultipartConfig, SizeConstraintExceededException}
-import org.slf4j.LoggerFactory
 
 import scala.slick.driver.PostgresDriver
 import scala.slick.driver.PostgresDriver.simple._
@@ -22,9 +22,7 @@ import scala.slick.driver.PostgresDriver.simple._
  * Created by Bill Lv on 2/4/15.
  */
 case class UsersController(val db: Database) extends FreeourStack with FileUploadSupport
-with JValueResult with JacksonJsonSupport {
-  val logger = LoggerFactory.getLogger(getClass)
-
+with JValueResult with JacksonJsonSupport with AuthenticationSupport {
   configureMultipartHandling(MultipartConfig(maxFileSize = Some(3 * 1024 * 1024)))
 
   protected implicit val jsonFormats: Formats = DefaultFormats
@@ -102,5 +100,22 @@ with JValueResult with JacksonJsonSupport {
     }
     contentType = "application/json"
     Ok(response.getWriter.print(status))
+  }
+
+  get("/:userId/avatar") {
+    requireLogin()
+
+    val userId: Long = params("userId").toLong
+    var photo: Option[Photo] = None
+
+    db.withSession { implicit session =>
+      val user = UserRepository.findById(userId).get
+      photo = PhotoRepository.findById(user.avatar.get)
+    }
+    val download: Path = Paths.get(FileConfig.getStorePath, photo.get.store)
+
+    contentType = "image/jpeg"
+    response.setHeader("Content-Disposition", "attachment; filename=" + photo.get.name)
+    download.toFile
   }
 }
