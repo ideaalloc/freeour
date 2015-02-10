@@ -36,6 +36,9 @@ object FreeourBuild extends Build {
         "org.mindrot" % "jbcrypt" % "0.3m",
         "org.scalatra" %% "scalatra-json" % "2.3.0",
         "org.json4s" %% "json4s-jackson" % "3.2.11",
+        "com.sksamuel.scrimage" %% "scrimage-core" % "1.4.2",
+        "com.sksamuel.scrimage" %% "scrimage-canvas" % "1.4.2",
+        "com.sksamuel.scrimage" %% "scrimage-filters" % "1.4.2",
         "javax.servlet" % "javax.servlet-api" % "3.1.0" % "container;provided;test" artifacts Artifact("javax.servlet-api", "jar", "jar")
       ),
 

@@ -1,9 +1,10 @@
 package org.freeour.app.controllers
 
-import java.io.InputStream
-import java.nio.file.{Files, Paths}
+import java.io.{InputStream, OutputStream}
+import java.nio.file.{Files, Path, Paths}
 import javax.servlet.ServletException
 
+import com.sksamuel.scrimage.{Format, Image}
 import org.freeour.app.FreeourStack
 import org.freeour.app.config.FileConfig
 import org.freeour.app.models._
@@ -50,6 +51,7 @@ with JValueResult with JacksonJsonSupport {
     val nickname: String = params.getOrElse("nickname", "")
     val phone: String = params.getOrElse("phone", "")
     var status: Int = 0
+    var storePath: Option[Path] = None
 
     try {
       Option(fileMultiParams("avatar").last) match {
@@ -60,17 +62,23 @@ with JValueResult with JacksonJsonSupport {
           if (!Files.exists(uploadPath)) {
             Files.createDirectory(uploadPath)
           }
-          val storeName: String = System.currentTimeMillis() + "_" + file.getName
+          val originalFileName: String = file.getName
+          val fileName = originalFileName.substring(0, originalFileName.lastIndexOf(".")) + ".jpg"
+
+          val storeName: String = System.currentTimeMillis() + "_" + fileName
           logger.info("uploads root:" + uploadPath.toFile.getAbsolutePath)
+          storePath = Some(Paths.get(uploadPath.toFile.getName, storeName))
+          val output: OutputStream = Files.newOutputStream(storePath.get)
           try {
-            Files.copy(input, Paths.get(uploadPath.toFile.getName, storeName))
+            Image(input).fit(50, 50).writer(Format.JPEG).withCompression(50).write(output)
           }
           finally {
-            input.close()
+            output.close
+            input.close
           }
           db.withTransaction { implicit session =>
             val result: PostgresDriver.ReturningInsertInvokerDef[Photos#TableElementType, Long]#SingleInsertResult =
-              (PhotoRepository returning PhotoRepository.map(_.id)) += Photo(None, file.getName, storeName, true)
+              (PhotoRepository returning PhotoRepository.map(_.id)) += Photo(None, fileName, storeName, true)
             val photoId: Long = result.toLong
             UserRepository += User(None, email, BCrypt.hashpw(password, BCrypt.gensalt()), nickname, Some(phone), false,
               Some(photoId))
@@ -85,6 +93,8 @@ with JValueResult with JacksonJsonSupport {
     }
     catch {
       case e: Throwable =>
+        if (storePath != None)
+          Files.deleteIfExists(storePath.get)
         if (e.getMessage.contains("duplicate key value violates unique constraint"))
           status = -2
         else
