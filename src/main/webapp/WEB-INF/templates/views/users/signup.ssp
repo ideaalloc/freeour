@@ -85,6 +85,8 @@
 						displayError("上传图片过大")
 					} else if (response.response == -1) {
 						displayError("注册错误")
+					} else {
+						window.location.replace("/");
 					}
 				}
 			});

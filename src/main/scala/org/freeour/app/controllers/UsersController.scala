@@ -2,7 +2,6 @@ package org.freeour.app.controllers
 
 import java.io.InputStream
 import java.nio.file.{Files, Paths}
-import java.util.NoSuchElementException
 import javax.servlet.ServletException
 
 import org.freeour.app.FreeourStack
@@ -53,7 +52,7 @@ with JValueResult with JacksonJsonSupport {
     var status: Int = 0
 
     try {
-      fileParams.get("avatar") match {
+      Option(fileMultiParams("avatar").last) match {
         case Some(file) =>
           logger.info("there is an avatar to upload....")
           val input: InputStream = file.getInputStream
