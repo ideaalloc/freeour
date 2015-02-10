@@ -3,7 +3,6 @@ package org.freeour.app.auth.strategies
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import org.freeour.app.models.{User, UserRepository}
-import org.mindrot.jbcrypt.BCrypt
 import org.scalatra.auth.ScentryStrategy
 import org.scalatra.{CookieOptions, ScalatraBase}
 import org.slf4j.LoggerFactory
@@ -49,14 +48,10 @@ class RememberMeStrategy(protected val app: ScalatraBase, protected val db: Data
     var user: Option[User] = None
     db withSession {
       implicit session =>
-        user = UserRepository.findByEmail(app.params.getOrElse("login", ""))
+        user = UserRepository.findById(tokenVal.toLong)
     }
-    val hashpw: String = BCrypt.hashpw(user.get.id.toString, BCrypt.gensalt())
 
-    if (user != None && BCrypt.checkpw(tokenVal, hashpw)) {
-      user
-    }
-    else None
+    user
   }
 
   /**
@@ -80,10 +75,13 @@ class RememberMeStrategy(protected val app: ScalatraBase, protected val db: Data
       var user: Option[User] = None
       db withSession {
         implicit session =>
-          user = UserRepository.findByEmail(app.params.getOrElse("login", ""))
+          val login: String = app.params.getOrElse("login", "")
+          if (login != "") {
+            user = UserRepository.findByEmail(login)
+          }
       }
-      val hashpw: String = BCrypt.hashpw(user.get.id.toString, BCrypt.gensalt())
-      app.cookies.set(COOKIE_KEY, hashpw)(CookieOptions(maxAge = oneWeek, path = "/"))
+      if (user != None)
+        app.cookies.set(COOKIE_KEY, user.get.id.get.toString)(CookieOptions(maxAge = oneWeek, path = "/"))
     }
   }
 
