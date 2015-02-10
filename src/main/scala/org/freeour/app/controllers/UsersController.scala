@@ -13,7 +13,7 @@ import org.json4s.{DefaultFormats, Formats}
 import org.mindrot.jbcrypt.BCrypt
 import org.scalatra.Ok
 import org.scalatra.json.{JValueResult, JacksonJsonSupport}
-import org.scalatra.servlet.{FileUploadSupport, MultipartConfig, SizeConstraintExceededException}
+import org.scalatra.servlet.{FileItem, FileUploadSupport, MultipartConfig, SizeConstraintExceededException}
 
 import scala.slick.driver.PostgresDriver
 import scala.slick.driver.PostgresDriver.simple._
@@ -51,8 +51,16 @@ with JValueResult with JacksonJsonSupport with AuthenticationSupport {
     var status: Int = 0
     var storePath: Option[Path] = None
 
+    val avatar: Seq[FileItem] = fileMultiParams("avatar")
+    var fileItem: Option[FileItem] = None
+    if (avatar.length > 1) {
+      fileItem = Some(avatar.last)
+    } else if (avatar.length == 1) {
+      fileItem = None
+    }
+
     try {
-      Option(fileMultiParams("avatar").last) match {
+      fileItem match {
         case Some(file) =>
           logger.info("there is an avatar to upload....")
           val input: InputStream = file.getInputStream
@@ -107,15 +115,24 @@ with JValueResult with JacksonJsonSupport with AuthenticationSupport {
 
     val userId: Long = params("userId").toLong
     var photo: Option[Photo] = None
+    var download: Option[Path] = None
 
     db.withSession { implicit session =>
       val user = UserRepository.findById(userId).get
-      photo = PhotoRepository.findById(user.avatar.get)
+
+      val avatar: Option[Long] = user.avatar
+      if (avatar == None) {
+        request.getServletContext.getRealPath("/")
+        download = Some(Paths.get(request.getServletContext.getRealPath("/"), "assets/images/matt.jpg"))
+      } else {
+        photo = PhotoRepository.findById(avatar.get)
+        download = Some(Paths.get(FileConfig.getStorePath, photo.get.store))
+      }
     }
-    val download: Path = Paths.get(FileConfig.getStorePath, photo.get.store)
 
     contentType = "image/jpeg"
-    response.setHeader("Content-Disposition", "attachment; filename=" + photo.get.name)
-    download.toFile
+    response.setHeader("Content-Disposition", "attachment; filename=" +
+      (if (photo == None) "matt.jpg" else photo.get.name))
+    download.get.toFile
   }
 }
