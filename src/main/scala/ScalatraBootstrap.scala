@@ -19,6 +19,7 @@ class ScalatraBootstrap extends LifeCycle {
     context.mount(new MainController(db), "/*")
     context.mount(new SessionsController(db), "/sessions/*")
     context.mount(new UsersController(db), "/users/*")
+    context.mount(new AdminController(db), "/admin/*")
   }
 
   private def closeDbConnection() {

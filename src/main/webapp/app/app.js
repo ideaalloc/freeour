@@ -4,9 +4,9 @@
  */
 var React = require('react');
 
-var Error = require('./js/components/ErrorApp.react');
+var Error = require('./js/components/ActivityApp.react');
 
 React.render(
-    <ErrorApp />,
-    document.getElementById('errors')
+    <ActivityApp />,
+    document.getElementById('activities')
 );

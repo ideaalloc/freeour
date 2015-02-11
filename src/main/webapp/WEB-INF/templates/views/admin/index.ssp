@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
+    <meta name="robots" content="Disallow">
+    <meta name="author" content="lvchao, ideaalloc@gmail.com">
+    <title>飞窝后台管理</title>
+
+    <link rel="stylesheet"
+          href="/app/common/bower_components/webix/codebase/webix.css"
+          type="text/css" media="screen" charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/assets/css/nav.css">
+    <style>
+        body {
+            background: #F2EFEA;
+        }
+
+        .transparent {
+            background-color: transparent;
+        }
+
+        .heading {
+            font-size: 19px;
+        }
+
+        .bradius {
+            border-radius: 4px;
+        }
+
+        .webix_modal {
+            opacity: 0.01;
+        }
+
+        .checked {
+            background: green;
+            width: 16px;
+            height: 16px;
+            margin-top: 3px;
+        }
+
+        .notchecked {
+            background: orange;
+            width: 16px;
+            height: 16px;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+<script src="/app/common/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/app/common/bower_components/webix/codebase/webix.js"
+        type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="/assets/js/nav.js"></script>
+
+<script type="text/javascript">
+
+    var custom_radio = function (obj, common, value) {
+        if (value)
+            return "<div class='webix_table_radio checked'></div>";
+        else
+            return "<div class='webix_table_radio notchecked'></div>";
+    };
+
+    var activity_data = [
+        {
+            "id": "1",
+            "title": "第四次活动",
+            "startTime": "2015-02-06 16:18",
+            "address": "八喜训练基地",
+            "description": "欢迎大家使用咱飞窝新的报名系统报名。\n人数7人以上可以订全场，大家快点报名啊。",
+            "available": "true"
+        }
+    ];
+
+    var remove = function () {
+        webix.confirm({
+            text: "确认删除", ok: "确定", cancel: "取消",
+            callback: function (res) {
+                if (res)return false
+            }
+        });
+        return false
+    };
+
+    var activity = {
+        id: "activity", scrollY: false,
+        view: "datatable", select: true, editable: true, editaction: "dblclick",
+        columns: [
+            {id: "id", header: "#", width: 40},
+            {id: "title", header: "标题", sort: "string", width: 150, editor: "text"},
+            {id: "startTime", header: "时间", sort: "date", editor: "date", format: webix.i18n.dateFormatStr},
+            {id: "address", header: "地址", sort: "string", width: 150, editor: "text"},
+            {id: "description", header: "描述", sort: "string", width: 500, editor: "text", fillspace: true},
+            {id: "available", header: "", template: custom_radio, editor: "checkbox", width: 35},
+            {
+                id: "trash",
+                header: "&nbsp;",
+                align: "center",
+                width: 35,
+                template: "<span  style='cursor:pointer;'  class='webix_icon fa-trash-o'></span>"
+            }
+        ],
+        on: {
+            onBeforeLoad: function(){
+                this.showOverlay("加载中...");
+            },
+            onAfterLoad: function(){
+                this.hideOverlay();
+            }
+        },
+        url: "/admin/data/activities",
+        onClick: {
+            "webix_icon": remove
+        }
+    };
+
+    var tools = [
+        {view: "button", value: "添加活动", width: 170, batch: "activity", click: '$$("activity-win").show();'},
+        {view: "text", id: "activity_filter", placeholder: "过滤活动..", width: 250, batch: "activity"}
+    ];
+
+    var saveActivity = function () {
+        if ($$("activity-form").validate()) {
+            $$("activity-form").bind($$("activity"));
+
+            var formValues = $$("activity-form").getValues();
+            webix.ajax().post("/admin/data/activities", formValues);
+            webix.message("保存成功");
+
+            $$("activity-form").save();
+            $$("activity-win").hide();
+        }
+        else {
+            webix.message({type: "error", text: "请检查您的输入"});
+        }
+    };
+
+    var ui_activity = {
+        view: "window", modal: true, id: "activity-win", left: 320, top: 290, css: "bradius",
+        head: {height: 38, template: "添加活动"},
+        body: {
+            padding: 18, view: "form", id: "activity-form", elements: [
+                {view: "text", name: "title", label: "标题", placeholder: "第一次活动", width: 350},
+                {view: "calendar", name: "startTime", date: new Date(), timepicker: true, timepickerHeight: 30},
+                {view: "text", name: "address", label: "地址", placeholder: "八喜训练基地"},
+                {view: "text", name: "description", label: "描述", placeholder: "欢迎大家使用咱飞窝新的报名系统报名。"},
+                {view: "checkbox", name: "available", label: "有效", id: "order-activity", value: 1},
+                {
+                    cols: [
+                        {view: "button", label: "添加", type: "form", width: 150, click: 'saveActivity();'},
+                        {},
+                        {view: "button", label: "取消", width: 150, click: '$$("activity-win").hide();'},
+                    ]
+                }
+            ],
+            rules: {
+                title: "isNotEmpty",
+                startTime: "isNotEmpty",
+                address: "isNotEmpty"
+            }
+        }
+    };
+
+    var ui = {
+        type: "space",
+        rows: [
+            {
+                rows: [
+                    {
+                        type: "clean",
+                        rows: [
+                            {
+                                view: "layout", type: "clean", paddingY: 10, css: "transparent", cols: [
+                                {view: "label", label: "<span class='heading'>飞窝后台管理</span>"},
+                                {view: "icon", icon: "cog"},
+                                {view: "icon", icon: "info-circle"},
+                                {view: "icon", icon: "sign-out"}
+                            ]
+                            },
+                            {
+                                view: "tabbar",
+                                tabOffset: 0,
+                                id: "top-tabbar",
+                                multiview: true,
+                                optionWidth: 120,
+                                borderless: true,
+                                options: [
+                                    {id: "activity", value: "活动"}
+                                ]
+                            },
+                            {view: "toolbar", id: "top-toolbar", visibleBatch: "activity", elements: tools}
+                        ]
+                    },
+                    {view: "multiview", animate: false, cells: [activity]}
+                ]
+            }
+        ]
+    };
+
+    webix.ready(function () {
+        webix.i18n.setLocale('zh-CN');
+        webix.ui({rows: [{view: "navbar", value: "admin"}, ui]});
+        webix.ui(ui_activity);
+
+        $$("top-tabbar").attachEvent("onAfterTabClick", function () {
+            $$("top-toolbar").showBatch(this.getValue());
+        });
+
+        $$("activity_filter").attachEvent("onTimedKeypress", function () {
+            var text = this.getValue().toString().toLowerCase();
+            $$("activity").filter(function (obj) {
+                var filter = obj.title;
+                filter = filter.toString().toLowerCase();
+                return (filter.indexOf(text) != -1);
+            });
+        });
+
+    });
+
+</script>
+
+
+</body>
+</html>

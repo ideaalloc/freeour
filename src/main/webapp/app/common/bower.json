@@ -3,6 +3,7 @@
   "version": "0.0.1-SNAPSHOT",
   "dependencies": {
     "jquery": "latest",
-    "semantic-ui": "latest"
+    "semantic-ui": "latest",
+    "webix": "~2.2.3"
   }
 }

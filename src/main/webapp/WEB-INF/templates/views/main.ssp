@@ -31,7 +31,10 @@
 <div class="ui two doubling cards">
     <div class="ui card">
         <div class="content">
-            <i class="right floated like icon"></i>
+            <div class="right floated ui disabled button">
+                <i class="user icon"></i>
+                已报名
+            </div>
 
             <div class="header">第四次活动</div>
             <div class="meta">2015年2月6日</div>

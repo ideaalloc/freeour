@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
+    <meta name="robots" content="Disallow">
+    <meta name="author" content="lvchao, ideaalloc@gmail.com">
+    <title>飞窝</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <link rel="stylesheet"
+        href="/app/common/bower_components/semantic-ui/dist/semantic.min.css">
+
+    <script type="text/javascript">
+      function loadDomain()
+      {
+        var display = document.getElementById("display-domain");
+        display.innerHTML = document.domain;
+      }
+
+      function checkSite(){
+        window.location = "/";
+      }
+    </script>
+  </head>
+
+  <body onload="javascript:loadDomain();">
+
+    <div class="container">
+      <!-- Jumbotron -->
+      <div class="jumbotron">
+        <h1><i class="ban icon"></i> 403 Forbidden</h1>
+        <p class="lead">Sorry! You don't have access permissions for that on <em><span id="display-domain"></span></em>.</p>
+
+        <p>
+            <div class="massive ui button">
+              <a onclick="javascript:checkSite();">Take Me To The Homepage</a>
+            </div>
+        </p>
+    </div>
+    </div>
+
+      <!-- Site footer -->
+      <div class="footer">
+        <p></p>
+      </div>
+
+    <!-- /container -->
+
+  </body>
+</html>
