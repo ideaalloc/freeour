@@ -83,13 +83,27 @@
         return false
     };
 
+    var xml_format = webix.Date.strToDate("%Y-%n-%d %H:%i");
+
     var activity = {
         id: "activity", scrollY: false,
         view: "datatable", select: true, editable: true, editaction: "dblclick",
+        scheme: {
+            $init: function (obj) {
+                var timeString = obj.startTime;
+                obj.startTime = xml_format(timeString);
+            }
+        },
         columns: [
             {id: "id", header: "#", width: 40},
             {id: "title", header: "标题", sort: "string", width: 150, editor: "text"},
-            {id: "startTime", header: "时间", sort: "date", editor: "date", format: webix.i18n.dateFormatStr},
+            {
+                id: "startTime",
+                header: "时间",
+                sort: "date",
+                width: 200,
+                format: webix.Date.dateToStr("%Y-%n-%d %H:%i")
+            },
             {id: "address", header: "地址", sort: "string", width: 150, editor: "text"},
             {id: "description", header: "描述", sort: "string", width: 500, editor: "text", fillspace: true},
             {id: "available", header: "", template: custom_radio, editor: "checkbox", width: 35},
@@ -102,34 +116,48 @@
             }
         ],
         on: {
-            onBeforeLoad: function(){
+            onBeforeLoad: function () {
                 this.showOverlay("加载中...");
             },
-            onAfterLoad: function(){
+            onAfterLoad: function () {
                 this.hideOverlay();
             }
         },
         url: "/admin/data/activities",
         onClick: {
             "webix_icon": remove
-        }
+        },
+        form: "activity-form"
     };
 
     var tools = [
-        {view: "button", value: "添加活动", width: 170, batch: "activity", click: '$$("activity-win").show();'},
+        {
+            view: "button",
+            value: "添加活动",
+            width: 170,
+            batch: "activity",
+            click: '$$("activity-win").close(); webix.ui(ui_activity); $$("activity-win").show();'
+        },
         {view: "text", id: "activity_filter", placeholder: "过滤活动..", width: 250, batch: "activity"}
     ];
 
     var saveActivity = function () {
         if ($$("activity-form").validate()) {
-            $$("activity-form").bind($$("activity"));
-
             var formValues = $$("activity-form").getValues();
-            webix.ajax().post("/admin/data/activities", formValues);
-            webix.message("保存成功");
 
-            $$("activity-form").save();
-            $$("activity-win").hide();
+            var format = webix.Date.dateToStr("%Y-%n-%d %H:%i");
+            formValues.startTimeString = format(formValues.startTime);
+
+            $.post("/admin/data/activities", formValues, function (data) {
+                if (parseInt(data) == -1) {
+                    webix.message({type: "error", text: "保存失败"});
+                } else {
+                    webix.message("保存成功");
+                    $$("activity-win").hide();
+                }
+            }).fail(function () {
+                webix.message({type: "error", text: "保存失败"});
+            });
         }
         else {
             webix.message({type: "error", text: "请检查您的输入"});
@@ -142,7 +170,14 @@
         body: {
             padding: 18, view: "form", id: "activity-form", elements: [
                 {view: "text", name: "title", label: "标题", placeholder: "第一次活动", width: 350},
-                {view: "calendar", name: "startTime", date: new Date(), timepicker: true, timepickerHeight: 30},
+                {
+                    view: "calendar",
+                    name: "startTime",
+                    date: new Date(),
+                    timepicker: true,
+                    timepickerHeight: 30,
+                    calendarDateFormat: "%Y-%n-%d %H:%i"
+                },
                 {view: "text", name: "address", label: "地址", placeholder: "八喜训练基地"},
                 {view: "text", name: "description", label: "描述", placeholder: "欢迎大家使用咱飞窝新的报名系统报名。"},
                 {view: "checkbox", name: "available", label: "有效", id: "order-activity", value: 1},

@@ -7,7 +7,7 @@ import scala.slick.driver.PostgresDriver.simple._
 /**
  * Created by Bill Lv on 2/7/15.
  */
-case class Activity(id: Option[Long] = None, title: String, address: String, description: String, startTime: Timestamp,
+case class Activity(var id: Option[Long] = None, title: String, address: String, description: String, startTime: Timestamp,
                     available: Boolean, initiator: Long)
 
 class Activities(tag: Tag) extends Table[Activity](tag, "ACTIVITIES") {
@@ -31,6 +31,9 @@ class Activities(tag: Tag) extends Table[Activity](tag, "ACTIVITIES") {
     (Activity.tupled, Activity.unapply)
 }
 
+case class ActivityJson(id: Option[Long] = None, title: String, address: String, description: String, startTime: String,
+                        available: Boolean, initiator: Long)
+
 object ActivityRepository extends TableQuery(new Activities(_)) {
   def findById(id: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
     filter(_.id === id).firstOption
@@ -39,4 +42,11 @@ object ActivityRepository extends TableQuery(new Activities(_)) {
     val offset: Int = (pageNum - 1) * pageSize
     sortBy(_.startTime.desc).drop(offset).take(pageSize)
   }
+
+  def update(activity: Activity)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) = {
+    filter(_.id === activity.id)
+      .map(p => (p.title, p.address, p.description, p.startTime, p.available))
+      .update((activity.title, activity.address, activity.description, activity.startTime, activity.available))
+  }
+
 }
