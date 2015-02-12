@@ -61,16 +61,34 @@ with JValueResult with JacksonJsonSupport {
         if (id == -1) {
           val activityId = (ActivityRepository returning ActivityRepository.map(_.id)) += activity
           ActivityStatsRepository += ActivityStats(None, activityId.toLong, Some(1), None)
+          status = activityId.toInt
         } else {
           activity.id = Some(id)
           ActivityRepository.update(activity)
+          status = id.toInt
         }
       }
-      status = 1
     }
     catch {
       case e: Throwable =>
         logger.info("Save activity error", e)
+        status = -1
+    }
+    Ok(response.getWriter.print(status))
+  }
+
+  post("/data/activities/:id") {
+    val activityId: Long = params("id").toLong
+    var status: Int = 0
+    try {
+      db.withTransaction { implicit session =>
+        ActivityStatsRepository.deleteByActivityId(activityId)
+        ActivityRepository.deleteById(activityId)
+      }
+    }
+    catch {
+      case e: Throwable =>
+        logger.info("Delete activity error", e)
         status = -1
     }
     Ok(response.getWriter.print(status))

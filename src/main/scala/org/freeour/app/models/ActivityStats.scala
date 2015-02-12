@@ -22,4 +22,6 @@ class ActivitiesStats(tag: Tag) extends Table[ActivityStats](tag, "ACTIVITIES_ST
 }
 
 object ActivityStatsRepository extends TableQuery(new ActivitiesStats(_)) {
+  def deleteByActivityId(activityId: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
+    filter(_.activityId === activityId).delete
 }

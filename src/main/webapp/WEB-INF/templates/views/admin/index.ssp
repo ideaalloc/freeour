@@ -77,7 +77,26 @@
         webix.confirm({
             text: "确认删除", ok: "确定", cancel: "取消",
             callback: function (res) {
-                if (res)return false
+                if (res) {
+                    var selectedRow = $$("activity").getSelectedId();
+                    if (selectedRow) {
+                        $.post("/admin/data/activities/" + selectedRow.id, function (data) {
+                            var status = parseInt(data);
+                            if (status == -1) {
+                                webix.message({type: "error", text: "删除失败"});
+                            } else {
+//                                $$("activity").load(activity.url);
+                                $$("activity").remove(selectedRow);
+                                webix.message("删除成功");
+                            }
+                        }).fail(function () {
+                            webix.message({type: "error", text: "删除失败"});
+                        });
+
+                    } else {
+                        webix.message({type: "error", text: "请先选择要删除的行"});
+                    }
+                }
             }
         });
         return false
@@ -106,14 +125,7 @@
             },
             {id: "address", header: "地址", sort: "string", width: 150, editor: "text"},
             {id: "description", header: "描述", sort: "string", width: 500, editor: "text", fillspace: true},
-            {id: "available", header: "", template: custom_radio, editor: "checkbox", width: 35},
-            {
-                id: "trash",
-                header: "&nbsp;",
-                align: "center",
-                width: 35,
-                template: "<span  style='cursor:pointer;'  class='webix_icon fa-trash-o'></span>"
-            }
+            {id: "available", header: "", template: custom_radio, editor: "checkbox", width: 35}
         ],
         on: {
             onBeforeLoad: function () {
@@ -124,22 +136,38 @@
             }
         },
         url: "/admin/data/activities",
-        onClick: {
-            "webix_icon": remove
-        },
         form: "activity-form"
     };
 
     var tools = [
         {
             view: "button",
-            value: "添加活动",
-            width: 170,
+            type: "icon",
+            icon: "plus-circle",
+            label: "添加",
+            width: 80,
+            inputWidth: 63,
             batch: "activity",
-            click: '$$("activity-win").close(); webix.ui(ui_activity); $$("activity-win").show();'
+            click: 'openNewActivityWindow();'
+        },
+        {
+            view: "button", type: "icon", icon: "trash-o", label: "删除", width: 80, batch: "activity",
+            click: 'remove'
         },
         {view: "text", id: "activity_filter", placeholder: "过滤活动..", width: 250, batch: "activity"}
     ];
+
+    var openNewActivityWindow = function () {
+        $$("activity").clearSelection();
+        $$("activity-win").close();
+        webix.ui(ui_activity);
+        $$("available-in-form").toggle();
+        $$('activity-form').setValues(
+                {id: -1}
+        );
+        $$('activity-form').bind($$('activity'));
+        $$("activity-win").show();
+    }
 
     var saveActivity = function () {
         if ($$("activity-form").validate()) {
@@ -149,9 +177,11 @@
             formValues.startTimeString = format(formValues.startTime);
 
             $.post("/admin/data/activities", formValues, function (data) {
-                if (parseInt(data) == -1) {
+                var status = parseInt(data);
+                if (status == -1) {
                     webix.message({type: "error", text: "保存失败"});
                 } else {
+                    $$("activity").load(activity.url);
                     webix.message("保存成功");
                     $$("activity-win").hide();
                 }
@@ -166,7 +196,7 @@
 
     var ui_activity = {
         view: "window", modal: true, id: "activity-win", left: 320, top: 290, css: "bradius",
-        head: {height: 38, template: "添加活动"},
+        head: {height: 38, template: "添加或修改活动"},
         body: {
             padding: 18, view: "form", id: "activity-form", elements: [
                 {view: "text", name: "title", label: "标题", placeholder: "第一次活动", width: 350},
@@ -180,10 +210,10 @@
                 },
                 {view: "text", name: "address", label: "地址", placeholder: "八喜训练基地"},
                 {view: "text", name: "description", label: "描述", placeholder: "欢迎大家使用咱飞窝新的报名系统报名。"},
-                {view: "checkbox", name: "available", label: "有效", id: "order-activity", value: 1},
+                {view: "checkbox", name: "available", label: "有效", id: "available-in-form", value: 1},
                 {
                     cols: [
-                        {view: "button", label: "添加", type: "form", width: 150, click: 'saveActivity();'},
+                        {view: "button", label: "确定", type: "form", width: 150, click: 'saveActivity();'},
                         {},
                         {view: "button", label: "取消", width: 150, click: '$$("activity-win").hide();'},
                     ]
@@ -192,7 +222,8 @@
             rules: {
                 title: "isNotEmpty",
                 startTime: "isNotEmpty",
-                address: "isNotEmpty"
+                address: "isNotEmpty",
+                available: "isNotEmpty"
             }
         }
     };
@@ -208,9 +239,7 @@
                             {
                                 view: "layout", type: "clean", paddingY: 10, css: "transparent", cols: [
                                 {view: "label", label: "<span class='heading'>飞窝后台管理</span>"},
-                                {view: "icon", icon: "cog"},
-                                {view: "icon", icon: "info-circle"},
-                                {view: "icon", icon: "sign-out"}
+                                {view: "icon", icon: "sign-out", click: "signOut"}
                             ]
                             },
                             {
@@ -233,10 +262,22 @@
         ]
     };
 
+    var signOut = function () {
+        $.ajax({
+            type: "POST",
+            url: "/sessions/logout",
+            cache: false,
+            complete: function(req) {
+                window.location.replace("/");
+            }
+        });
+    };
+
     webix.ready(function () {
         webix.i18n.setLocale('zh-CN');
         webix.ui({rows: [{view: "navbar", value: "admin"}, ui]});
         webix.ui(ui_activity);
+        $$('activity-form').bind($$('activity'));
 
         $$("top-tabbar").attachEvent("onAfterTabClick", function () {
             $$("top-toolbar").showBatch(this.getValue());

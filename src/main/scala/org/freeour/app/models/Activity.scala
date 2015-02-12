@@ -49,4 +49,6 @@ object ActivityRepository extends TableQuery(new Activities(_)) {
       .update((activity.title, activity.address, activity.description, activity.startTime, activity.available))
   }
 
+  def deleteById(id: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
+    filter(_.id === id).delete
 }
