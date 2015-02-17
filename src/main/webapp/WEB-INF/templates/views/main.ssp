@@ -66,9 +66,7 @@
                     joinedBtn.html('<i class="user icon"></i>已报名');
 
                     var joinedNum = joinedBtn.parent().next().children('.check.icon').next();
-                    console.log(joinedNum);
                     var realNum = parseInt(joinedNum.text()) + 1;
-                    console.log(realNum);
                     joinedNum.text(realNum);
 
                     var people = joinedBtn.parent().next().next();

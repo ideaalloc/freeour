@@ -37,4 +37,7 @@ object ActivityUserRepository extends TableQuery(new ActivitiesUsers(_)) {
 
   def exists(activityId: Long, userId: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
     filter(p => p.activityId === activityId && p.userId === userId).exists.run
+
+  def deleteByActivityId(activityId: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
+    filter(_.activityId === activityId).delete
 }

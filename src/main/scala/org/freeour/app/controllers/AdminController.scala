@@ -83,6 +83,7 @@ with JValueResult with JacksonJsonSupport {
     try {
       db.withTransaction { implicit session =>
         ActivityStatsRepository.deleteByActivityId(activityId)
+        ActivityUserRepository.deleteByActivityId(activityId)
         ActivityRepository.deleteById(activityId)
       }
     }
