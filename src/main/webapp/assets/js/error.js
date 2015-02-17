@@ -23,9 +23,9 @@ var Error = React.createClass({
 
 });
 
-var displayError = function(message) {
+var displayError = function (message) {
     React.render(
         <Error message={message} />,
         document.getElementById('errors')
     );
-}
+};

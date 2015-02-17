@@ -40,7 +40,7 @@ object ActivityRepository extends TableQuery(new Activities(_)) {
 
   def findOnPage(pageNum: Int, pageSize: Int)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) = {
     val offset: Int = (pageNum - 1) * pageSize
-    sortBy(_.startTime.desc).drop(offset).take(pageSize)
+    sortBy(_.startTime.desc).drop(offset).take(pageSize).list
   }
 
   def update(activity: Activity)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) = {
@@ -51,4 +51,7 @@ object ActivityRepository extends TableQuery(new Activities(_)) {
 
   def deleteById(id: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
     filter(_.id === id).delete
+
+  def findAllAvailable(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
+    filter(_.available === true).sortBy(_.startTime.desc).list
 }

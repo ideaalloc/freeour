@@ -86,3 +86,4 @@ jrebel.lic
 
 # jsx precompile specific
 /src/main/webapp/assets/js/build
+/src/main/webapp/assets/js/activities/build

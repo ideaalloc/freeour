@@ -3,10 +3,11 @@
  * Date: 2015-02-09
  */
 var React = require('react');
+var Activities = require('./components/Activities');
 
-var Error = require('./js/components/ActivityApp.react');
-
-React.render(
-    <ActivityApp />,
-    document.getElementById('activities')
-);
+var listActivities = function(userId) {
+    React.render(
+        <Activities userId={userId} />,
+        document.getElementById('activities')
+    );
+}

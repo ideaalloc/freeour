@@ -30,11 +30,11 @@ class ActivitiesUsers(tag: Tag) extends Table[ActivityUser](tag, "ACTIVITIES_USE
 
 object ActivityUserRepository extends TableQuery(new ActivitiesUsers(_)) {
   def findByActivityId(activityId: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
-    filter(_.activityId === activityId).sortBy(_.joinDate.asc)
+    filter(_.activityId === activityId).sortBy(_.joinDate.asc).map(_.userId).run
 
   def countUsers(activityId: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
-    filter(_.activityId === activityId).length
+    filter(_.activityId === activityId).length.run
 
-  def findByActivityIdUserId(activityId: Long, userId: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
-    filter(p => p.activityId === activityId && p.userId === userId).firstOption
+  def exists(activityId: Long, userId: Long)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
+    filter(p => p.activityId === activityId && p.userId === userId).exists.run
 }
