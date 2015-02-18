@@ -28,9 +28,7 @@ var ActivitiesBox = React.createClass({
 
     render: function () {
         return (
-            <div className="ui two doubling cards">
-                <ActivityList data={this.state.data} />
-            </div>
+            <ActivityList data={this.state.data} />
         );
     }
 });

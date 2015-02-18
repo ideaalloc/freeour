@@ -62,17 +62,6 @@
             return "<div class='webix_table_radio notchecked'></div>";
     };
 
-    var activity_data = [
-        {
-            "id": "1",
-            "title": "第四次活动",
-            "startTime": "2015-02-06 16:18",
-            "address": "八喜训练基地",
-            "description": "欢迎大家使用咱飞窝新的报名系统报名。\n人数7人以上可以订全场，大家快点报名啊。",
-            "available": "true"
-        }
-    ];
-
     var remove = function () {
         webix.confirm({
             text: "确认删除", ok: "确定", cancel: "取消",
@@ -159,13 +148,13 @@
 
     var openNewActivityWindow = function () {
         $$("activity").clearSelection();
-        $$("activity-win").close();
-        webix.ui(ui_activity);
-        $$("available-in-form").toggle();
-        $$('activity-form').setValues(
-                {id: -1}
-        );
-        $$('activity-form').bind($$('activity'));
+//        $$("activity-win").close();
+//        webix.ui(ui_activity);
+//        $$("available-in-form").toggle();
+//        $$('activity-form').setValues(
+//                {id: -1}
+//        );
+//        $$('activity-form').bind($$('activity'));
         $$("activity-win").show();
     }
 
@@ -195,7 +184,7 @@
     };
 
     var ui_activity = {
-        view: "window", modal: true, id: "activity-win", left: 320, top: 290, css: "bradius",
+        view: "window", modal: true, id: "activity-win", left: 320, top: 10, css: "bradius",
         head: {height: 38, template: "添加或修改活动"},
         body: {
             padding: 18, view: "form", id: "activity-form", elements: [
@@ -209,7 +198,7 @@
                     calendarDateFormat: "%Y-%n-%d %H:%i"
                 },
                 {view: "text", name: "address", label: "地址", placeholder: "八喜训练基地"},
-                {view: "text", name: "description", label: "描述", placeholder: "欢迎大家使用咱飞窝新的报名系统报名。"},
+                {view: "textarea", name: "description", label: "描述", placeholder: "欢迎大家使用咱飞窝新的报名系统报名。"},
                 {view: "checkbox", name: "available", label: "有效", id: "available-in-form", value: 1},
                 {
                     cols: [
