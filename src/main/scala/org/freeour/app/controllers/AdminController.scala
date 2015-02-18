@@ -95,4 +95,36 @@ with JValueResult with JacksonJsonSupport {
     Ok(response.getWriter.print(status))
   }
 
+  get("/data/users") {
+    db.withSession { implicit session =>
+      UserRepository.list
+    }
+  }
+
+  post("/data/users") {
+    var status: Int = 0
+    val id: Long = params.getOrElse("id", "-1").toLong
+    if (id == -1) {
+      status = -1
+    } else {
+      try {
+        db.withTransaction { implicit session =>
+          UserRepository.update(User(Some(id), params("email"), params("password")
+            , params("nickname"), Some(params("phone")),
+            params("isAdmin").toInt match {
+              case 1 => true
+              case _ => false
+            }))
+          status = id.toInt
+        }
+      }
+      catch {
+        case e: Throwable =>
+          logger.info("Update user error", e)
+          status = -2
+      }
+    }
+    Ok(response.getWriter.print(status))
+  }
+
 }

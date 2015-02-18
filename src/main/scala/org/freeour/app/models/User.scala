@@ -42,4 +42,10 @@ object UserRepository extends TableQuery(new Users(_)) {
 
   def findByEmail(email: String)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) =
     filter(_.email === email).firstOption
+
+  def update(user: User)(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) = {
+    filter(_.id === user.id)
+      .map(p => (p.nickname, p.phone, p.isAdmin))
+      .update((user.nickname, user.phone.get, user.isAdmin))
+  }
 }

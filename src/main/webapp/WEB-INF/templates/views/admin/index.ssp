@@ -128,6 +128,38 @@
         form: "activity-form"
     };
 
+    var user = {
+        id: "user", scrollY: false,
+        view: "datatable", select: true, editable: true, editaction: "dblclick",
+        scheme: {
+            $init: function (obj) {
+
+            }
+        },
+        columns: [
+            {id: "id", header: "头像", width: 80, template: "<img class='image' src='/users/#id#/avatar'>"},
+            {id: "email", header: "电邮", sort: "string", width: 200},
+            {id: "nickname", header: "昵称", sort: "string", width: 150, editor: "text"},
+            {id: "phone", header: "电话", sort: "string", width: 200, editor: "text"},
+            {id: "isAdmin", header: "", template: custom_radio, editor: "checkbox", width: 35, fillspace: true}
+        ],
+        fixedRowHeight:false,
+        rowHeight:50,
+        on: {
+            onBeforeLoad: function () {
+                this.showOverlay("加载中...");
+            },
+            onAfterLoad: function () {
+                this.hideOverlay();
+            },
+            onresize: webix.once(function(){
+                this.adjustRowHeight("id", true);
+            })
+        },
+        url: "/admin/data/users",
+        form: "user-form"
+    };
+
     var tools = [
         {
             view: "button",
@@ -143,7 +175,8 @@
             view: "button", type: "icon", icon: "trash-o", label: "删除", width: 80, batch: "activity",
             click: 'remove'
         },
-        {view: "text", id: "activity_filter", placeholder: "过滤活动..", width: 250, batch: "activity"}
+        {view: "text", id: "activity_filter", placeholder: "过滤活动..", width: 250, batch: "activity"},
+        {view: "text", id: "user_filter", placeholder: "过滤用户..", width: 250, batch: "user"}
     ];
 
     var openNewActivityWindow = function () {
@@ -176,6 +209,30 @@
                 }
             }).fail(function () {
                 webix.message({type: "error", text: "保存失败"});
+            });
+        }
+        else {
+            webix.message({type: "error", text: "请检查您的输入"});
+        }
+    };
+
+    var saveUser = function () {
+        if ($$("user-form").validate()) {
+            var formValues = $$("user-form").getValues();
+
+            $.post("/admin/data/users", formValues, function (data) {
+                var status = parseInt(data);
+                if (status == -1) {
+                    webix.message({type: "error", text: "id为空"});
+                } else if (status == -2) {
+                    webix.message({type: "error", text: "更新失败"});
+                } else {
+                    $$("user").load(user.url);
+                    webix.message("保存成功");
+                    $$("user-win").hide();
+                }
+            }).fail(function () {
+                webix.message({type: "error", text: "更新失败"});
             });
         }
         else {
@@ -217,6 +274,30 @@
         }
     };
 
+    var ui_user = {
+        view: "window", modal: true, id: "user-win", left: 320, top: 10, css: "bradius",
+        head: {height: 38, template: "修改用户"},
+        body: {
+            padding: 18, view: "form", id: "user-form", elements: [
+                {view: "text", name: "email", label: "电邮", placeholder: "电邮", width: 350, readonly: true},
+                {view: "text", name: "nickname", label: "昵称", placeholder: "昵称", width: 350},
+                {view: "text", name: "phone", label: "电话", placeholder: "电话", width: 350},
+                {view: "checkbox", name: "isAdmin", label: "管理员", value: 0},
+                {
+                    cols: [
+                        {view: "button", label: "确定", type: "form", width: 150, click: 'saveUser();'},
+                        {},
+                        {view: "button", label: "取消", width: 150, click: '$$("user-win").hide();'},
+                    ]
+                }
+            ],
+            rules: {
+                nickname: "isNotEmpty",
+                isAdmin: "isNotEmpty"
+            }
+        }
+    };
+
     var ui = {
         type: "space",
         rows: [
@@ -239,13 +320,14 @@
                                 optionWidth: 120,
                                 borderless: true,
                                 options: [
-                                    {id: "activity", value: "活动"}
+                                    {id: "activity", value: "活动"},
+                                    {id: "user", value: "用户"}
                                 ]
                             },
                             {view: "toolbar", id: "top-toolbar", visibleBatch: "activity", elements: tools}
                         ]
                     },
-                    {view: "multiview", animate: false, cells: [activity]}
+                    {view: "multiview", animate: false, cells: [activity, user]}
                 ]
             }
         ]
@@ -256,7 +338,7 @@
             type: "POST",
             url: "/sessions/logout",
             cache: false,
-            complete: function(req) {
+            complete: function (req) {
                 window.location.replace("/");
             }
         });
@@ -266,7 +348,9 @@
         webix.i18n.setLocale('zh-CN');
         webix.ui({rows: [{view: "navbar", value: "admin"}, ui]});
         webix.ui(ui_activity);
+        webix.ui(ui_user);
         $$('activity-form').bind($$('activity'));
+        $$('user-form').bind($$('user'));
 
         $$("top-tabbar").attachEvent("onAfterTabClick", function () {
             $$("top-toolbar").showBatch(this.getValue());
@@ -276,6 +360,15 @@
             var text = this.getValue().toString().toLowerCase();
             $$("activity").filter(function (obj) {
                 var filter = obj.title;
+                filter = filter.toString().toLowerCase();
+                return (filter.indexOf(text) != -1);
+            });
+        });
+
+        $$("user_filter").attachEvent("onTimedKeypress", function () {
+            var text = this.getValue().toString().toLowerCase();
+            $$("user").filter(function (obj) {
+                var filter = obj.email;
                 filter = filter.toString().toLowerCase();
                 return (filter.indexOf(text) != -1);
             });
