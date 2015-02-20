@@ -7,8 +7,9 @@ import scala.slick.driver.PostgresDriver.simple._
 /**
  * Created by Bill Lv on 2/3/15.
  */
-case class User(id: Option[Long] = None, email: String, password: String, nickname: String, phone: Option[String] = None,
-                isAdmin: Boolean, avatar: Option[Long] = None) {
+case class User(id: Option[Long] = None, email: String, password: String, var nickname: String,
+                var phone: Option[String] = None,
+                isAdmin: Boolean, var avatar: Option[Long] = None) {
   val logger = LoggerFactory.getLogger(getClass)
 
   def forgetMe = {

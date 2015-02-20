@@ -43,7 +43,7 @@ class UserPasswordStrategy(protected val app: ScalatraBase, protected val db: Da
 
     db withSession {
       implicit session =>
-        user = UserRepository.findByEmail(login)
+        user = UserRepository.findByEmail(login.toLowerCase)
     }
 
     if (user != None && BCrypt.checkpw(password, user.get.password)) {

@@ -77,7 +77,7 @@ class RememberMeStrategy(protected val app: ScalatraBase, protected val db: Data
         implicit session =>
           val login: String = app.params.getOrElse("login", "")
           if (login != "") {
-            user = UserRepository.findByEmail(login)
+            user = UserRepository.findByEmail(login.toLowerCase)
           }
       }
       if (user != None)

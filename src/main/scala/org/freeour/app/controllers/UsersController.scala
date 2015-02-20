@@ -44,7 +44,7 @@ with JValueResult with JacksonJsonSupport with AuthenticationSupport {
   }
 
   post("/signup") {
-    val email: String = params.getOrElse("email", "")
+    val email: String = params.getOrElse("email", "").toLowerCase
     val password: String = params.getOrElse("password", "")
     val nickname: String = params.getOrElse("nickname", "")
     val phone: String = params.getOrElse("phone", "")
@@ -134,5 +134,101 @@ with JValueResult with JacksonJsonSupport with AuthenticationSupport {
     response.setHeader("Content-Disposition", "attachment; filename=" +
       (if (photo == None) "matt.jpg" else photo.get.name))
     download.get.toFile
+  }
+
+  get("/profile") {
+    requireLogin()
+
+    contentType = "text/html"
+    ssp("/users/profile", "layout" -> "", "user" -> user)
+  }
+
+  post("/profile") {
+    val userId: Long = params.getOrElse("uid", "").toLong
+    val nickname: String = params.getOrElse("nickname", "")
+    val phone: String = params.getOrElse("phone", "")
+    var status: Int = 0
+    var storePath: Option[Path] = None
+
+    val avatar: Seq[FileItem] = fileMultiParams("avatar")
+    var fileItem: Option[FileItem] = None
+    if (avatar.length > 1) {
+      fileItem = Some(avatar.last)
+    } else if (avatar.length == 1) {
+      fileItem = None
+    }
+
+    try {
+      var user: Option[User] = None
+      db.withSession { implicit session =>
+        user = UserRepository.findById(userId)
+        user.get.nickname = nickname
+        user.get.phone = Some(phone)
+      }
+
+      fileItem match {
+        case Some(file) =>
+          logger.info("there is an avatar to upload....")
+          val input: InputStream = file.getInputStream
+          val uploadPath = Paths.get(FileConfig.getStorePath)
+          if (!Files.exists(uploadPath)) {
+            Files.createDirectory(uploadPath)
+          }
+          val originalFileName: String = file.getName
+          val fileName = originalFileName.substring(0, originalFileName.lastIndexOf(".")) + ".jpg"
+
+          val storeName: String = System.currentTimeMillis() + "_" + fileName
+          logger.info("uploads root:" + uploadPath.toFile.getAbsolutePath)
+          storePath = Some(Paths.get(uploadPath.toFile.getName, storeName))
+          val output: OutputStream = Files.newOutputStream(storePath.get)
+          try {
+            Image(input).fit(50, 50).writer(Format.JPEG).withCompression(50).write(output)
+          }
+          finally {
+            output.close
+            input.close
+          }
+          db.withTransaction { implicit session =>
+            deleteOriginalPhoto(user)
+            val result: PostgresDriver.ReturningInsertInvokerDef[Photos#TableElementType, Long]#SingleInsertResult =
+              (PhotoRepository returning PhotoRepository.map(_.id)) += Photo(None, fileName, storeName, true)
+            val photoId: Long = result.toLong
+            user.get.avatar = Some(photoId)
+
+            updateUser(userId, user)
+          }
+        case None =>
+          logger.info("there is no avatar to upload")
+          db.withTransaction { implicit session =>
+            updateUser(userId, user)
+          }
+      }
+    }
+    catch {
+      case e: Throwable =>
+        if (storePath != None)
+          Files.deleteIfExists(storePath.get)
+        if (e.getMessage.contains("duplicate key value violates unique constraint"))
+          status = -2
+        else
+          status = -1
+    }
+    contentType = "application/json"
+    Ok(response.getWriter.print(status))
+  }
+
+  def updateUser(userId: Long, user: Option[User])(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef): Int = {
+    UserRepository.filter(_.id === userId)
+      .map(p => (p.nickname, p.phone, p.avatar))
+      .update((user.get.nickname, user.get.phone.get, user.get.avatar.get))
+  }
+
+  def deleteOriginalPhoto(user: Option[User])(implicit session: scala.slick.jdbc.JdbcBackend#SessionDef) {
+    val avatar: Option[Long] = user.get.avatar
+    if (avatar != None) {
+      val photo = PhotoRepository.findById(avatar.get)
+      Paths.get(FileConfig.getStorePath, photo.get.store).toFile.delete
+      PhotoRepository.deleteById(photo.get.id.get)
+    }
   }
 }

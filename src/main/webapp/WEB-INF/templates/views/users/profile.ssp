@@ -1,0 +1,122 @@
+<%@ val user: org.freeour.app.models.User %>
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
+    <meta name="robots" content="Disallow">
+    <meta name="author" content="lvchao, ideaalloc@gmail.com">
+    <title>飞窝</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <link rel="stylesheet"
+          href="/app/common/bower_components/semantic-ui/dist/semantic.min.css">
+    <link rel="stylesheet" href="/assets/css/picedit.min.css">
+</head>
+<body>
+<div class="ui secondary menu">
+    <a class="active item" href="/">
+        <i class="home icon"></i>
+    </a>
+
+    <div class="right menu">
+        <a class="ui item" href="/users/profile">
+            <img class="ui avatar image" alt="avatar"
+                 src="/users/${user.id}/avatar">
+        </a>
+        <a class="ui item" id="logout">
+            <i class="large sign out icon"></i>
+        </a>
+    </div>
+</div>
+<form class="ui form" action="/users/profile" method="post" enctype="multipart/form-data">
+    <div id="errors">
+    </div>
+
+    <input type="hidden" name="uid" value="${user.id}">
+
+    <h4 class="ui dividing header">账户信息</h4>
+
+    <div class="two fields">
+        <div class="required field">
+            <div class="ui icon input">
+                <input type="email" name="email" placeholder="电邮" value="${user.email}" readonly>
+                <i class="mail icon"></i>
+            </div>
+        </div>
+        <div class="required field">
+        </div>
+    </div>
+
+    <h4 class="ui dividing header">个人信息</h4>
+
+    <div class="field">
+        <input type="file" name="avatar" id="thebox">
+    </div>
+
+    <div class="two fields">
+        <div class="field">
+            <div class="ui icon input">
+                <input type="text" name="nickname" placeholder="昵称" value="${user.nickname}" required>
+                <i class="user icon"></i>
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui icon input">
+                <input type="text" name="phone" placeholder="电话" value="${user.phone}">
+                <i class="call icon"></i>
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="ui submit button">保存</button>
+</form>
+
+<div class="ui responsive grid copyright">
+    <div class="ui row ">
+
+        <div class="sixteen wide center aligned column">
+            &#169; 2015 <a href="http://www.lyuchao.com" target="_blank">&nbsp;吕超</a>
+        </div>
+
+    </div>
+</div>
+
+<script src="/app/common/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/app/common/bower_components/semantic-ui/dist/semantic.min.js"></script>
+<script src="/assets/js/picedit.min.js"></script>
+<script src="/app/node_modules/react/dist/react.js"></script>
+<script src="/assets/js/build/error.js"></script>
+<script>
+    $(function () {
+        $("#logout").click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/sessions/logout",
+                cache: false,
+                complete: function (req) {
+                    window.location.replace("/");
+                }
+            });
+        });
+
+        $('#thebox').picEdit({
+            maxWidth: 200,
+            formSubmitted: function (response) {
+                if (response.status != 200) {
+                    displayError("系统错误")
+                } else if (response.response == -2) {
+                    displayError("邮箱已被注册")
+                } else if (response.response == -3) {
+                    displayError("上传图片过大")
+                } else if (response.response == -1) {
+                    displayError("注册错误")
+                } else {
+                    window.location.replace("/");
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

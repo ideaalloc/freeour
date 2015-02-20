@@ -21,9 +21,12 @@
     </a>
 
     <div class="right menu">
-        <a class="ui item" id="logout">
+        <a class="ui item" href="/users/profile">
             <img class="ui avatar image" alt="avatar"
                  src="/users/${userId}/avatar">
+        </a>
+        <a class="ui item" id="logout">
+            <i class="large sign out icon"></i>
         </a>
     </div>
 </div>
