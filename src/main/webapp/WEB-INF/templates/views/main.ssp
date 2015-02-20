@@ -29,7 +29,7 @@
 </div>
 <form method="post" id="activitiesForm">
     <input type="hidden" id="userId" value="${userId}">
-
+    <input type="hidden" id="activityId">
     <div id="activities"></div>
 </form>
 <script src="/app/common/bower_components/jquery/dist/jquery.min.js"></script>
@@ -37,6 +37,7 @@
 <script src="/app/node_modules/react/dist/react.js"></script>
 <script src="/assets/js/activities/build/activities.js"></script>
 <script>
+
     $(function () {
         $("#logout").click(function (e) {
             e.preventDefault();
@@ -50,10 +51,14 @@
             });
         });
 
+        $(document).on("click", ":submit", function(e){
+            $("#activityId").val($(this).val());
+        });
+
         $("#activitiesForm").submit(function (event) {
             event.preventDefault();
             var $form = $(this);
-            var activityId = $form.find('button[name="activityId"]:focus').val();
+            var activityId = $("#activityId").val();
             var userId = $('#userId').val();
             var url = '/activities/users/' + userId;
 
