@@ -26,7 +26,7 @@ object FreeourBuild extends Build {
         "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
         "org.scalatra" %% "scalatra-auth" % ScalatraVersion,
         "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
-        "ch.qos.logback" % "logback-classic" % "1.1.1" % "runtime",
+        "ch.qos.logback" % "logback-classic" % "1.1.1",
         "org.eclipse.jetty" % "jetty-plus" % JettyVersion % "container;provided",
         "org.eclipse.jetty" % "jetty-webapp" % JettyVersion % "container",
         "org.eclipse.jetty.websocket" % "websocket-server" % JettyVersion % "container;provided",
