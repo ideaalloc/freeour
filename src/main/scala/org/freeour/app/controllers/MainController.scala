@@ -2,11 +2,18 @@ package org.freeour.app.controllers
 
 import java.text.SimpleDateFormat
 
+import dispatch.Defaults._
+import dispatch._
 import org.freeour.app.FreeourStack
 import org.freeour.app.auth.AuthenticationSupport
+import org.freeour.app.client.AccessToken
+import org.freeour.app.client.FreeourJsonProtocol._
+import org.freeour.app.config.GlobalConfig
+import org.freeour.app.config.WechatConfig._
 import org.freeour.app.models.{ActivityJson, ActivityRepository, ActivityUser, ActivityUserRepository}
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.json.{JValueResult, JacksonJsonSupport}
+import spray.json._
 
 import scala.slick.driver.MySQLDriver.simple._
 
@@ -20,7 +27,27 @@ with JValueResult with JacksonJsonSupport {
   val formatter: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm")
 
   before() {
-    requireLogin()
+    if (GlobalConfig.isDevMode) {
+      requireLogin()
+    } else {
+      // wechat auth
+      val apiAccessTokenTemplate: String = getApiAccessToken
+      val uri: String = apiAccessTokenTemplate.replace("#appid", getAppid).
+        replace("#secret", getSecret)
+      logger.info("get code uri: " + uri)
+      val codeRequest = dispatch.url(uri).secure
+      val get: Req = codeRequest.GET.addHeader("Content-type", "application/json")
+      val result = Http(get OK as.String).either
+      result() match {
+        case Right(content) =>
+          logger.info("Content: " + content)
+          val jsonObj: JsValue = content.parseJson
+          val accessToken: AccessToken = jsonObj.convertTo[AccessToken]
+          logger.info("Access token: " + accessToken.access_token)
+        case Left(StatusCode(404)) => logger.info("Not found")
+        case _ => logger.info("exception")
+      }
+    }
     contentType = formats("json")
   }
 

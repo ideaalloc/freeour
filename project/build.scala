@@ -40,6 +40,7 @@ object FreeourBuild extends Build {
         "com.sksamuel.scrimage" %% "scrimage-canvas" % "1.4.2",
         "com.sksamuel.scrimage" %% "scrimage-filters" % "1.4.2",
         "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
+        "io.spray" %% "spray-json" % "1.3.1",
         "javax.servlet" % "javax.servlet-api" % "3.1.0" % "container;provided;test" artifacts Artifact("javax.servlet-api", "jar", "jar")
       ),
 
