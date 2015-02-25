@@ -21,7 +21,6 @@ trait FreeourStack extends ScalatraServlet with ScalateSupport with FlashMapSupp
     engine.packagePrefix = "templates"
     engine
   }
-
   /* end wiring up the precompiled templates */
 
   override protected def templateAttributes(implicit request: HttpServletRequest): mutable.Map[String, Any] = {

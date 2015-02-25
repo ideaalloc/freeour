@@ -7,7 +7,7 @@ import org.scalatra.auth.ScentryStrategy
 import org.scalatra.{CookieOptions, ScalatraBase}
 import org.slf4j.LoggerFactory
 
-import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.driver.MySQLDriver.simple._
 
 class RememberMeStrategy(protected val app: ScalatraBase, protected val db: Database)(
   implicit request: HttpServletRequest, response: HttpServletResponse)

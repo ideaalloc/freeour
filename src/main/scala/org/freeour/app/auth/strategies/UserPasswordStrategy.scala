@@ -8,7 +8,7 @@ import org.scalatra.ScalatraBase
 import org.scalatra.auth.ScentryStrategy
 import org.slf4j.LoggerFactory
 
-import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.driver.MySQLDriver.simple._
 
 class UserPasswordStrategy(protected val app: ScalatraBase, protected val db: Database)(
   implicit request: HttpServletRequest, response: HttpServletResponse)

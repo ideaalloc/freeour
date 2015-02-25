@@ -2,7 +2,7 @@ package org.freeour.app.models
 
 import org.slf4j.LoggerFactory
 
-import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.driver.MySQLDriver.simple._
 
 /**
  * Created by Bill Lv on 2/3/15.

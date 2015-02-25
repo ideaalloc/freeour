@@ -15,8 +15,8 @@ import org.scalatra.Ok
 import org.scalatra.json.{JValueResult, JacksonJsonSupport}
 import org.scalatra.servlet.{FileItem, FileUploadSupport, MultipartConfig, SizeConstraintExceededException}
 
-import scala.slick.driver.PostgresDriver
-import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.driver.MySQLDriver
+import scala.slick.driver.MySQLDriver.simple._
 
 /**
  * Created by Bill Lv on 2/4/15.
@@ -83,7 +83,7 @@ with JValueResult with JacksonJsonSupport with AuthenticationSupport {
             input.close
           }
           db.withTransaction { implicit session =>
-            val result: PostgresDriver.ReturningInsertInvokerDef[Photos#TableElementType, Long]#SingleInsertResult =
+            val result: MySQLDriver.ReturningInsertInvokerDef[Photos#TableElementType, Long]#SingleInsertResult =
               (PhotoRepository returning PhotoRepository.map(_.id)) += Photo(None, fileName, storeName, true)
             val photoId: Long = result.toLong
             UserRepository += User(None, email, BCrypt.hashpw(password, BCrypt.gensalt()), nickname, Some(phone), false,
@@ -190,7 +190,7 @@ with JValueResult with JacksonJsonSupport with AuthenticationSupport {
           }
           db.withTransaction { implicit session =>
             deleteOriginalPhoto(user)
-            val result: PostgresDriver.ReturningInsertInvokerDef[Photos#TableElementType, Long]#SingleInsertResult =
+            val result: MySQLDriver.ReturningInsertInvokerDef[Photos#TableElementType, Long]#SingleInsertResult =
               (PhotoRepository returning PhotoRepository.map(_.id)) += Photo(None, fileName, storeName, true)
             val photoId: Long = result.toLong
             user.get.avatar = Some(photoId)

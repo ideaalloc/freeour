@@ -8,7 +8,7 @@ import org.freeour.app.models.{ActivityJson, ActivityRepository, ActivityUser, A
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.json.{JValueResult, JacksonJsonSupport}
 
-import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.driver.MySQLDriver.simple._
 
 /**
  * Created by Bill Lv on 2/10/15.

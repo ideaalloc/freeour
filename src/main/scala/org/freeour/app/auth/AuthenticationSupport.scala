@@ -6,7 +6,7 @@ import org.scalatra.ScalatraBase
 import org.scalatra.auth.{ScentryConfig, ScentrySupport}
 import org.slf4j.LoggerFactory
 
-import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.driver.MySQLDriver.simple._
 
 
 trait AuthenticationSupport extends ScalatraBase with ScentrySupport[User] {

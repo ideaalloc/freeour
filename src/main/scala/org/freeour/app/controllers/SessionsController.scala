@@ -5,7 +5,7 @@ import java.util.NoSuchElementException
 import org.freeour.app.FreeourStack
 import org.freeour.app.auth.AuthenticationSupport
 
-import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.driver.MySQLDriver.simple._
 
 case class SessionsController(val db: Database) extends FreeourStack with AuthenticationSupport {
 

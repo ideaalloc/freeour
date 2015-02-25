@@ -4,7 +4,7 @@ import org.freeour.app.models._
 import org.mindrot.jbcrypt.BCrypt
 import org.scalatra.ScalatraServlet
 
-import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.jdbc.JdbcBackend.Database.dynamicSession
 
 /**
@@ -28,8 +28,8 @@ trait SlickRoutes extends ScalatraServlet {
   get("/load-data") {
     db withDynSession {
       UserRepository ++= Seq(
-        User(None, "ideaalloc@gmail.com", BCrypt.hashpw("888888", BCrypt.gensalt()),
-          "Bill", Some("13888888888"), true, None)
+        User(None, "admin@me.me", BCrypt.hashpw("888888", BCrypt.gensalt()),
+          "Admin", Some("13888888888"), true, None)
       )
       Unit
     }
